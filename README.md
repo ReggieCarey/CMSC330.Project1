@@ -1,7 +1,8 @@
 # CMSC330
 
 ## LEXICAL PARSING
-'''
+
+```groovy
 import java.util.regex.*
 
 def p = [
@@ -48,4 +49,4 @@ while (string) {
   }
   if (!patternUsed) throw new Exception("Syntax error at [$lineNumber:$offset]")
 }
-'''
+```
