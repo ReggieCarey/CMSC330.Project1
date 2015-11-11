@@ -11,10 +11,13 @@
 package com.carey;
 
 /**
+ * Token is the representation of the basic lexeme of the language. Tokens
+ * embody the type content and location in the source file where they were
+ * found.
  *
  * @author ReginaldCarey
  */
-public class Token {
+class Token {
 
     private final Type type;
     private final String content;
@@ -22,13 +25,14 @@ public class Token {
     private final int offset;
 
     /**
+     * Tokens are immutable. Once constructed they cannot be changed.
      *
-     * @param type
-     * @param content
-     * @param lineNumber
-     * @param offset
+     * @param type The token type
+     * @param content The extracted relevant content of the token
+     * @param lineNumber The line number where the token was found
+     * @param offset The offset into the line where the token was found
      */
-    public Token(Type type, String content, int lineNumber, int offset) {
+    Token(Type type, String content, int lineNumber, int offset) {
         this.type = type;
         this.content = content;
         this.lineNumber = lineNumber;
@@ -36,38 +40,39 @@ public class Token {
     }
 
     /**
+     * Generic getter for content.
      *
-     * @return
+     * @return content as a String
      */
-    public String getContent() {
+    String getContent() {
         return content;
     }
 
     /**
+     * Generic getter for type.
      *
-     * @return
+     * @return type as a Type
      */
-    public Type getType() {
+    Type getType() {
         return type;
     }
 
     /**
+     * Generic getter for lineNumber
      *
-     * @return
+     * @return lineNumber as an Integer. First line is 1.
      */
-    public int getLineNumber() {
+    int getLineNumber() {
         return lineNumber;
     }
 
     /**
+     * Generic getter for offset
      *
-     * @return
+     * @return offset as an Integer. First character in a line is 1.
      */
-    public int getOffset() {
+    int getOffset() {
         return offset;
     }
 
-    public String toString() {
-        return String.format("type: %s, content: %s, line: %d, offset: %d",type,content,lineNumber,offset);
-    }
 }

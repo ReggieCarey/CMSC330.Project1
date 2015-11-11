@@ -11,13 +11,13 @@
 package com.carey;
 
 /**
- * ParseException is used to identify problems in recursive descent parsing.
- * The recursive descent parser can find defects in the code it's parsing these
- * are reported via this exception.
+ * ParseException is used to identify problems in recursive descent parsing. The
+ * recursive descent parser can find defects in the code it's parsing these are
+ * reported via this exception.
  *
  * @author ReginaldCarey
  */
-class ParseException extends Exception {
+public class ParseException extends Exception {
 
     public ParseException(String message) {
         super(message);

@@ -5,7 +5,6 @@
  */
 package com.carey;
 
-import java.util.regex.Matcher;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,9 +15,9 @@ import org.junit.Test;
  *
  * @author ReginaldCarey
  */
-public class TypeTest {
+public class TokenTest {
 
-    public TypeTest() {
+    public TokenTest() {
     }
 
     @BeforeClass
@@ -38,42 +37,56 @@ public class TypeTest {
     }
 
     /**
-     * Test of values method, of class Type.
+     * Test of getContent method, of class Token.
      */
     @Test
-    public void testValues() {
-        System.out.println("values");
-        Type[] expResult = null;
-        Type[] result = Type.values();
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of valueOf method, of class Type.
-     */
-    @Test
-    public void testValueOf() {
-        System.out.println("valueOf");
-        String name = "";
-        Type expResult = null;
-        Type result = Type.valueOf(name);
+    public void testGetContent() {
+        System.out.println("getContent");
+        Token instance = null;
+        String expResult = "";
+        String result = instance.getContent();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
 
     /**
-     * Test of getMatcher method, of class Type.
+     * Test of getType method, of class Token.
      */
     @Test
-    public void testGetMatcher() {
-        System.out.println("getMatcher");
-        CharSequence charSequence = null;
-        Type instance = null;
-        Matcher expResult = null;
-        Matcher result = instance.getMatcher(charSequence);
+    public void testGetType() {
+        System.out.println("getType");
+        Token instance = null;
+        Type expResult = null;
+        Type result = instance.getType();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getLineNumber method, of class Token.
+     */
+    @Test
+    public void testGetLineNumber() {
+        System.out.println("getLineNumber");
+        Token instance = null;
+        int expResult = 0;
+        int result = instance.getLineNumber();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getOffset method, of class Token.
+     */
+    @Test
+    public void testGetOffset() {
+        System.out.println("getOffset");
+        Token instance = null;
+        int expResult = 0;
+        int result = instance.getOffset();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

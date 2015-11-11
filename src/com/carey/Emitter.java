@@ -41,6 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Emitter has the job of implementing the output of the recursive descent
@@ -49,9 +50,30 @@ import javax.swing.JTextField;
  *
  * @author ReginaldCarey
  */
-public class Emitter {
+class Emitter {
 
-    LinkedList parsingStack = new LinkedList();
+    private final LinkedList parsingStack;
+
+    /**
+     * Emitter constructor sets up the environment for the emitter and its
+     * output.
+     *
+     * @throws ParseException
+     */
+    Emitter() throws ParseException {
+        try {
+            // Set the Nimbus look and feel if available
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            throw new ParseException("Unable to render the GUI", ex);
+        }
+        parsingStack = new LinkedList();
+    }
 
     /**
      * Emit stores and acts on the activity of the parser. This method will
@@ -74,10 +96,9 @@ public class Emitter {
             }
 
             if (cmd == ENDWINDOW) {
-                JFrame jFrame = (JFrame) parsingStack.pop();
 
-                // Render the GUI on to the screen
-                jFrame.setVisible(true);
+                // We delay popping the GUI from the stack to make sure
+                // we've consumed all of the input.
             }
 
             if (cmd == PANEL) {
@@ -154,9 +175,8 @@ public class Emitter {
             }
 
             if (cmd == ENDOFINPUT) {
-                if (!parsingStack.isEmpty()) {
-                    throw new ParseException("Emitter queue is not empty");
-                }
+                JFrame jFrame = (JFrame) parsingStack.pop();
+                jFrame.setVisible(true);
             }
         } catch (ClassCastException ex) {
             throw new ParseException("Command arguments or elements on the parsing stack are of the wrong type", ex);
@@ -211,6 +231,7 @@ public class Emitter {
      */
     private JTextField generateTextfield(int columns) {
         JTextField jTextField = new JTextField();
+        jTextField.setFont(new java.awt.Font("Courier", 0, 14));
         jTextField.setColumns(columns);
         return jTextField;
     }
@@ -221,6 +242,7 @@ public class Emitter {
     private JLabel generateLabel(String labelText) {
         JLabel jLabel = new JLabel();
         jLabel.setText(labelText);
+        jLabel.setHorizontalAlignment(JLabel.CENTER);
         return jLabel;
     }
 
@@ -257,4 +279,5 @@ public class Emitter {
         ButtonGroup buttonGroup = new ButtonGroup();
         return buttonGroup;
     }
+
 }

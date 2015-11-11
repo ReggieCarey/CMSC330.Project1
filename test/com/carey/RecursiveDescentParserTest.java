@@ -5,8 +5,8 @@
  */
 package com.carey;
 
+import java.io.File;
 import java.io.Reader;
-import java.io.StringReader;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -40,29 +40,41 @@ public class RecursiveDescentParserTest {
 
     /**
      * Test of parse method, of class RecursiveDescentParser.
-     * @throws java.lang.Exception
      */
     @Test
-    public void testParse() throws Exception {
-        Reader stream = new StringReader(
-                "Window \"Calculator\" (200, 200) Layout Flow:\n"
-                + "  Textfield 20;\n"
-                + "  Panel Layout Grid(4, 3, 5, 5):\n"
-                + "    Button \"7\";\n"
-                + "    Button \"8\";\n"
-                + "    Button \"9\";\n"
-                + "    Button \"4\";\n"
-                + "    Button \"5\";\n"
-                + "    Button \"6\";\n"
-                + "    Button \"1\";\n"
-                + "    Button \"2\";\n"
-                + "    Button \"3\";\n"
-                + "    Label \"\";\n"
-                + "    Button \"0\";\n"
-                + "  End;\n"
-                + "End.");
+    public void testParse_Reader() throws Exception {
+        System.out.println("parse");
+        Reader stream = null;
         RecursiveDescentParser instance = new RecursiveDescentParser();
         instance.parse(stream);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of parse method, of class RecursiveDescentParser.
+     */
+    @Test
+    public void testParse_String() throws Exception {
+        System.out.println("parse");
+        String content = "";
+        RecursiveDescentParser instance = new RecursiveDescentParser();
+        instance.parse(content);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of parse method, of class RecursiveDescentParser.
+     */
+    @Test
+    public void testParse_File() throws Exception {
+        System.out.println("parse");
+        File file = null;
+        RecursiveDescentParser instance = new RecursiveDescentParser();
+        instance.parse(file);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
 }

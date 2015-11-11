@@ -34,8 +34,12 @@ import static com.carey.Type.SEMICOLON;
 import static com.carey.Type.STRING;
 import static com.carey.Type.TEXTFIELD;
 import static com.carey.Type.WINDOW;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.util.Arrays;
 
 /**
  * This class implements a Recursive Descent Parser. It parses the grammar as
@@ -47,30 +51,58 @@ import java.io.Reader;
  * GUI using Java SWING API's instead of generating the Java Source Code to
  * produce the GUI.
  *
- * Implementation details: This class utilizes two helper classes, LexicalParser
- * and Emitter. LexicalParser has the job to present a stream tokens. It also
- * provides helper routines to evaluate the current token.
- *
  * @author ReginaldCarey
  */
 public class RecursiveDescentParser {
 
-    private LexicalParser lex;
+    private LexicalScanner lex;
     private Emitter emitter;
 
     /**
      * Parse a GUI DSL producing a GUI. This method will parse the contents of a
      * Reader and generate a GUI based on the content.
      *
-     * @param stream - a basic reader.
-     * @throws IOException - on problems reading the reader
-     * @throws SyntaxError - on any token parsing error
-     * @throws ParseException - on any structural parsing error
+     * @param stream A basic reader containing the content to parse.
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
      */
     public void parse(Reader stream) throws IOException, SyntaxError, ParseException {
-        lex = new LexicalParser(stream);
-        emitter = new Emitter();
-        gui();
+        try {
+            lex = new LexicalScanner(stream);
+            emitter = new Emitter();
+            gui();
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+    }
+
+    /**
+     * Parse a GUI DSL producing a GUI. This method will parse the contents of a
+     * Reader and generate a GUI based on the content.
+     *
+     * @param content A string containing the content to parse.
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
+     */
+    public void parse(String content) throws IOException, SyntaxError, ParseException {
+        parse(new StringReader(content));
+    }
+
+    /**
+     * Parse a GUI DSL producing a GUI. This method will parse the contents of a
+     * Reader and generate a GUI based on the content.
+     *
+     * @param file A file containing the content to parse.
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
+     */
+    public void parse(File file) throws IOException, SyntaxError, ParseException {
+        parse(new FileReader(file));
     }
 
     /**
@@ -78,26 +110,26 @@ public class RecursiveDescentParser {
      *
      * gui ::= Window STRING '(' NUMBER ',' NUMBER ')' layout widgets End '.'
      *
-     * @throws IOException
-     * @throws SyntaxError
-     * @throws ParseException
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
      */
     private void gui() throws IOException, SyntaxError, ParseException {
-        lex.matchAndAdvance(BEGINOFINPUT);
-        lex.matchAndAdvance(WINDOW);
-        String windowName = lex.matchAndAdvance(STRING).getContent();
-        lex.matchAndAdvance(LPAREN);
-        int width = Integer.parseInt(lex.matchAndAdvance(NUMBER).getContent());
-        lex.matchAndAdvance(COMMA);
-        int height = Integer.parseInt(lex.matchAndAdvance(NUMBER).getContent());
-        lex.matchAndAdvance(RPAREN);
+        matchThenAdvance(BEGINOFINPUT);
+        matchThenAdvance(WINDOW);
+        String windowName = matchThenAdvance(STRING).getContent();
+        matchThenAdvance(LPAREN);
+        int width = Integer.parseInt(matchThenAdvance(NUMBER).getContent());
+        matchThenAdvance(COMMA);
+        int height = Integer.parseInt(matchThenAdvance(NUMBER).getContent());
+        matchThenAdvance(RPAREN);
         emitter.emit(WINDOW, windowName, width, height);
         layout();
         widgets();
-        lex.matchAndAdvance(END);
+        matchThenAdvance(END);
         emitter.emit(ENDWINDOW);
-        lex.matchAndAdvance(PERIOD);
-        lex.match(ENDOFINPUT);
+        matchThenAdvance(PERIOD);
+        match(ENDOFINPUT);
         emitter.emit(ENDOFINPUT);
     }
 
@@ -106,14 +138,14 @@ public class RecursiveDescentParser {
      *
      * layout ::= Layout layout_type ':'
      *
-     * @throws IOException
-     * @throws SyntaxError
-     * @throws ParseException
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
      */
     private void layout() throws IOException, SyntaxError, ParseException {
-        lex.matchAndAdvance(LAYOUT);
+        matchThenAdvance(LAYOUT);
         layout_type();
-        lex.matchAndAdvance(COLON);
+        matchThenAdvance(COLON);
         emitter.emit(LAYOUT);
     }
 
@@ -124,29 +156,33 @@ public class RecursiveDescentParser {
      * layout_type ::= Flow | Grid '(' NUMBER ',' NUMBER [',' NUMBER ',' NUMBER]
      * ')'
      *
-     * @throws IOException
-     * @throws SyntaxError
-     * @throws ParseException
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
      */
     private void layout_type() throws IOException, SyntaxError, ParseException {
-        if (lex.doesMatchThenAdvance(FLOW)) {
+        Token token = matchThenAdvance(FLOW, GRID);
+
+        if (FLOW == token.getType()) {
             emitter.emit(FLOW);
-        } else if (lex.doesMatchThenAdvance(GRID)) {
+        }
+
+        if (GRID == token.getType()) {
             int rows, cols;
-            lex.matchAndAdvance(LPAREN);
-            rows = Integer.parseInt(lex.matchAndAdvance(NUMBER).getContent());
-            lex.matchAndAdvance(COMMA);
-            cols = Integer.parseInt(lex.matchAndAdvance(NUMBER).getContent());
-            if (lex.doesMatchThenAdvance(COMMA)) {
+            matchThenAdvance(LPAREN);
+            rows = Integer.parseInt(matchThenAdvance(NUMBER).getContent());
+            matchThenAdvance(COMMA);
+            cols = Integer.parseInt(matchThenAdvance(NUMBER).getContent());
+            if (doesMatchThenAdvance(COMMA) != null) {
                 int hgap, vgap;
-                hgap = Integer.parseInt(lex.matchAndAdvance(NUMBER).getContent());
-                lex.matchAndAdvance(COMMA);
-                vgap = Integer.parseInt(lex.matchAndAdvance(NUMBER).getContent());
+                hgap = Integer.parseInt(matchThenAdvance(NUMBER).getContent());
+                matchThenAdvance(COMMA);
+                vgap = Integer.parseInt(matchThenAdvance(NUMBER).getContent());
                 emitter.emit(GRID, rows, cols, hgap, vgap);
             } else {
                 emitter.emit(GRID, rows, cols);
             }
-            lex.matchAndAdvance(RPAREN);
+            matchThenAdvance(RPAREN);
         }
     }
 
@@ -155,62 +191,66 @@ public class RecursiveDescentParser {
      *
      * widgets ::= widget widgets | widget
      *
-     * NOTE: We take advantage of tail recursion optimization and convert to a
-     * loop.
+     * NOTE: We COULD take advantage of tail recursion optimization and convert
+     * to a loop.
      *
-     * @throws IOException
-     * @throws SyntaxError
-     * @throws ParseException
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
      */
     private void widgets() throws IOException, SyntaxError, ParseException {
         widget();
-        while (lex.doesMatchAny(BUTTON, GROUP, LABEL, PANEL, TEXTFIELD)) {
-            widget();
+        if (!doesMatch(END)) {
+            widgets();
         }
     }
 
     /**
      * Recursive Descent Parser for widget. Parses widget as per the grammar:
      *
-     * widget ::=
-     *      Button STRING ';' |
-     *      Group radio_buttons End ';' |
-     *      Label STRING ';' |
-     *      Panel layout widgets End ';' |
-     *      Textfield NUMBER ';'
+     * widget ::= Button STRING ';' | Group radio_buttons End ';' | Label STRING
+     * ';' | Panel layout widgets End ';' | Textfield NUMBER ';'
      *
-     * @throws IOException
-     * @throws SyntaxError
-     * @throws ParseException
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
      */
     private void widget() throws IOException, SyntaxError, ParseException {
-        if (lex.doesMatchThenAdvance(BUTTON)) {
-            String buttonText = lex.matchAndAdvance(STRING).getContent();
-            lex.matchAndAdvance(SEMICOLON);
+        Token token = matchThenAdvance(BUTTON, GROUP, LABEL, PANEL, TEXTFIELD);
+
+        if (BUTTON == token.getType()) {
+            String buttonText = matchThenAdvance(STRING).getContent();
+            matchThenAdvance(SEMICOLON);
             emitter.emit(BUTTON, buttonText);
-        } else if (lex.doesMatchThenAdvance(GROUP)) {
+        }
+
+        if (GROUP == token.getType()) {
             emitter.emit(GROUP);
             radio_buttons();
-            lex.matchAndAdvance(END);
-            lex.matchAndAdvance(SEMICOLON);
+            matchThenAdvance(END);
+            matchThenAdvance(SEMICOLON);
             emitter.emit(ENDGROUP);
-        } else if (lex.doesMatchThenAdvance(LABEL)) {
-            String labelText = lex.matchAndAdvance(STRING).getContent();
-            lex.matchAndAdvance(SEMICOLON);
+        }
+
+        if (LABEL == token.getType()) {
+            String labelText = matchThenAdvance(STRING).getContent();
+            matchThenAdvance(SEMICOLON);
             emitter.emit(LABEL, labelText);
-        } else if (lex.doesMatchThenAdvance(PANEL)) {
+        }
+
+        if (PANEL == token.getType()) {
             emitter.emit(PANEL);
             layout();
             widgets();
-            lex.matchAndAdvance(END);
-            lex.matchAndAdvance(SEMICOLON);
+            matchThenAdvance(END);
+            matchThenAdvance(SEMICOLON);
             emitter.emit(ENDPANEL);
-        } else if (lex.doesMatchThenAdvance(TEXTFIELD)) {
-            int columns = Integer.parseInt(lex.matchAndAdvance(NUMBER).getContent());
-            lex.matchAndAdvance(SEMICOLON);
+        }
+
+        if (TEXTFIELD == token.getType()) {
+            int columns = Integer.parseInt(matchThenAdvance(NUMBER).getContent());
+            matchThenAdvance(SEMICOLON);
             emitter.emit(TEXTFIELD, columns);
-        } else {
-            throw new ParseException(String.format("Expected one of [Button, Group, Label, Panel, Textfield] at [%d:%d]", lex.getCurrentToken().getLineNumber(), lex.getCurrentToken().getOffset()));
         }
     }
 
@@ -220,17 +260,17 @@ public class RecursiveDescentParser {
      *
      * radio_buttons ::= radio_button radio_buttons | radio_button
      *
-     * NOTE: We take advantage of tail recursion optimization and convert to a
-     * loop.
+     * NOTE: We COULD take advantage of tail recursion optimization and convert
+     * to a loop.
      *
-     * @throws IOException
-     * @throws SyntaxError
-     * @throws ParseException
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
      */
     private void radio_buttons() throws IOException, SyntaxError, ParseException {
         radio_button();
-        while (lex.doesMatch(RADIO)) {
-            radio_button();
+        if (!doesMatch(END)) {
+            radio_buttons();
         }
     }
 
@@ -240,15 +280,90 @@ public class RecursiveDescentParser {
      *
      * radio_button ::= Radio STRING ';'
      *
-     * @throws IOException
-     * @throws SyntaxError
-     * @throws ParseException
+     * @throws IOException On problems reading the reader
+     * @throws SyntaxError On any token parsing error
+     * @throws ParseException On any structural parsing error
      */
     private void radio_button() throws IOException, SyntaxError, ParseException {
-        lex.matchAndAdvance(RADIO);
-        String name = lex.matchAndAdvance(STRING).getContent();
-        lex.matchAndAdvance(SEMICOLON);
+        matchThenAdvance(RADIO);
+        String name = matchThenAdvance(STRING).getContent();
+        matchThenAdvance(SEMICOLON);
         emitter.emit(RADIO, name);
+    }
+
+    /**
+     * ***********************************************************************
+     */
+    /* Helper methods for the recursive descent methods above                 */
+    /**
+     * ***********************************************************************
+     */
+    /**
+     * Match the expected type(s). This method will match the token type to the
+     * current token. A null <code>types</code> always matches.
+     *
+     * @param types The array of token types to match
+     * @return The current token at the front of the stream
+     * @throws ParseException If the token at the front of the stream does not
+     * match
+     */
+    private Token match(Type... types) throws ParseException {
+        if (doesMatch(types)) {
+            return lex.getCurrentToken();
+        }
+        throw new ParseException(String.format("Unexpected content [%s] - expecting a token from %s at [%d:%d]\n",
+                lex.getCurrentToken().getContent(),
+                Arrays.toString(types),
+                lex.getCurrentToken().getLineNumber(),
+                lex.getCurrentToken().getOffset()));
+    }
+
+    /**
+     * Match the expected type(s) and consume the next token. This method will
+     * match the token type to the current token and then consume the next token
+     * from the stream. A null <code>types</code> always matches.
+     *
+     * @param types The array of token types to match
+     * @return The matched token at the front of the stream
+     * @throws ParseException If the token at the front of the stream does not
+     * match
+     * @throws IOException If there are problems consuming the stream
+     * @throws SyntaxError If the front of the stream does not correspond to a
+     * token
+     */
+    private Token matchThenAdvance(Type... types) throws ParseException, IOException, SyntaxError {
+        Token prevToken = (types.length == 0) ? lex.getCurrentToken() : match(types);
+        lex.advance();
+        return prevToken;
+    }
+
+    /**
+     * Match any of the types. This method will match the token types to the
+     * current token. A null <code>types</code> always matches.
+     *
+     * @param types An array of token types to match
+     * @return true if the current token is in the types set, false otherwise
+     */
+    private boolean doesMatch(Type... types) {
+        return (types.length == 0) ? true : Arrays.asList(types).contains(lex.getCurrentToken().getType());
+    }
+
+    /**
+     * Match the expected type(s) and consume the next token. This method will
+     * match the token type(s) to the current token and then consume the next
+     * token from the stream if there was a match. A null <code>types</code>
+     * always matches.
+     *
+     * @param types The array of token types to match
+     * @return The currentToken if matched, null otherwise.
+     * @throws ParseException If the token at the front of the stream does not
+     * match
+     * @throws IOException If there are problems consuming the stream
+     * @throws SyntaxError If the front of the stream does not correspond to a
+     * token
+     */
+    private Token doesMatchThenAdvance(Type... types) throws ParseException, IOException, SyntaxError {
+        return doesMatch(types) ? matchThenAdvance() : null;
     }
 
 }
