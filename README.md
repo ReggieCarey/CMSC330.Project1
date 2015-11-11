@@ -1,3 +1,5 @@
+#CMSC 330 - 7980 - Project #1
+
 ******************************************************************************
 
  * NAME: Reginald B Carey
@@ -9,11 +11,32 @@
 
 ******************************************************************************
 
-# CMSC 330 - 7980 - Project #1
-## Recursive Descent Parser
+### Instructions
 
----
+To run the project from the command line, go to the ```dist``` folder and
+type one of the following:
 
+```bash
+$ java -jar "GUI_DSL.jar" --demo
+```
+This will generate a demonstration GUI
+
+```bash
+$ java -jar "GUI_DSL.jar" --program
+```
+This will output the source code for the demonstration GUI
+
+```bash
+$ cat someProgram.dsl | java -jar "GUI_DSL.jar"
+```
+This will compile and generate a GUI from standard input
+
+```bash
+$ java -jar "GUI_DSL.jar" someProgram.dsl
+```
+This will compile and generate a GUI from the file
+
+### ASSIGNMENT
 
 The first programming project involves writing a program that parses, using recursive descent, a GUI definition language defined in an input file and generates the GUI that it defines. The grammar for this language is defined below:
 
