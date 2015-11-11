@@ -75,6 +75,8 @@ public class Emitter {
 
             if (cmd == ENDWINDOW) {
                 JFrame jFrame = (JFrame) parsingStack.pop();
+
+                // Render the GUI on to the screen
                 jFrame.setVisible(true);
             }
 
@@ -94,8 +96,11 @@ public class Emitter {
 
             if (cmd == ENDGROUP) {
                 ButtonGroup buttonGroup = (ButtonGroup) parsingStack.pop();
+
+                // Turn an enumeration into a list.
                 Enumeration<AbstractButton> enumeration = buttonGroup.getElements();
                 List<AbstractButton> radioButtonList = Collections.list(enumeration);
+
                 Container container = (Container) parsingStack.peek();
                 for (AbstractButton button : radioButtonList) {
                     container.add(button);
