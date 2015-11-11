@@ -25,11 +25,12 @@ public class Main {
     /**
      * @param args the command line arguments. No arguments means to parse
      * standard input. --demo or -D means to generate a demonstration parse of a
-     * program. Otherwise it's a filename of a file to be parsed.
+     * program. --program or -P to output the code that drives the demo.
+     * Otherwise it's a filename of a file to be parsed.
      */
     public static void main(String[] args) {
 
-        String testProgram = "             \n"
+        String demoProgram = ""
                 + "Window \"Calculator\" (300, 300) Layout Flow:\n"
                 + "  Textfield 20;\n"
                 + "  Panel Layout Grid(2,1):\n"
@@ -37,7 +38,7 @@ public class Main {
                 + "      Group\n"
                 + "        Radio \"Basic\";\n"
                 + "        Radio \"Scientific\";\n"
-                + "        Radio Window \"Programmer\";\n"
+                + "        Radio \"Programmer\";\n"
                 + "      End;\n"
                 + "    End;\n"
                 + "    Label \"CMSC 330 - Reggie Carey\";\n"
@@ -75,8 +76,10 @@ public class Main {
         try {
             if (args.length == 0) {
                 parser.parse(new InputStreamReader(System.in));
+            } else if ("--program".equals(args[0]) || "-P".equals(args[0])) {
+                System.out.println(demoProgram);
             } else if ("--demo".equals(args[0]) || "-D".equals(args[0])) {
-                parser.parse(testProgram);
+                parser.parse(demoProgram);
             } else {
                 parser.parse(new File(args[0]));
             }

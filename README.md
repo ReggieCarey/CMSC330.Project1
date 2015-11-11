@@ -13,6 +13,10 @@
 
 ### Instructions
 
+Java Version: JDK 1.8
+
+Test Library: JUnit 4.10
+
 To run the project from the command line, go to the ```dist``` folder and
 type one of the following:
 
