@@ -1,12 +1,19 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * *****************************************************************************
+ * NAME: Reginald B Carey
+ * EMPLID: 0316442
+ * PROJECT: Recursive Descent Parser - Project 1
+ * COURSE: CMSC 330 - 7980
+ * SECTION: 2158
+ * SEMESTER: FALL 2015
+ * *****************************************************************************
  */
 package com.carey;
 
+import static com.carey.Type.STRING;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,12 +49,10 @@ public class TokenTest {
     @Test
     public void testGetContent() {
         System.out.println("getContent");
-        Token instance = null;
-        String expResult = "";
+        Token instance = new Token(STRING, "The world at your fingers", 10, 20);
+        String expResult = "The world at your fingers";
         String result = instance.getContent();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -56,12 +61,10 @@ public class TokenTest {
     @Test
     public void testGetType() {
         System.out.println("getType");
-        Token instance = null;
-        Type expResult = null;
+        Token instance = new Token(STRING, "The world at your fingers", 10, 20);
+        Type expResult = STRING;
         Type result = instance.getType();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -70,12 +73,10 @@ public class TokenTest {
     @Test
     public void testGetLineNumber() {
         System.out.println("getLineNumber");
-        Token instance = null;
-        int expResult = 0;
+        Token instance = new Token(STRING, "The world at your fingers", 10, 20);
+        int expResult = 10;
         int result = instance.getLineNumber();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -84,12 +85,10 @@ public class TokenTest {
     @Test
     public void testGetOffset() {
         System.out.println("getOffset");
-        Token instance = null;
-        int expResult = 0;
+        Token instance = new Token(STRING, "The world at your fingers", 10, 20);
+        int expResult = 20;
         int result = instance.getOffset();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
 }

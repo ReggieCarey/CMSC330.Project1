@@ -1,13 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * *****************************************************************************
+ * NAME: Reginald B Carey
+ * EMPLID: 0316442
+ * PROJECT: Recursive Descent Parser - Project 1
+ * COURSE: CMSC 330 - 7980
+ * SECTION: 2158
+ * SEMESTER: FALL 2015
+ * *****************************************************************************
  */
 package com.carey;
 
-import java.util.regex.Matcher;
+import static com.carey.Type.STRING;
+import static com.carey.Type.WINDOW;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,45 +45,22 @@ public class TypeTest {
     }
 
     /**
-     * Test of values method, of class Type.
-     */
-    @Test
-    public void testValues() {
-        System.out.println("values");
-        Type[] expResult = null;
-        Type[] result = Type.values();
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of valueOf method, of class Type.
-     */
-    @Test
-    public void testValueOf() {
-        System.out.println("valueOf");
-        String name = "";
-        Type expResult = null;
-        Type result = Type.valueOf(name);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of getMatcher method, of class Type.
      */
     @Test
     public void testGetMatcher() {
         System.out.println("getMatcher");
-        CharSequence charSequence = null;
-        Type instance = null;
-        Matcher expResult = null;
-        Matcher result = instance.getMatcher(charSequence);
+        CharSequence charSequence = "Window to the stars";
+        Type instance = WINDOW;
+        boolean expResult = true;
+        boolean result = instance.getMatcher(charSequence).lookingAt();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        charSequence = "\"Window\" to the stars";
+        instance = STRING;
+        expResult = true;
+        result = instance.getMatcher(charSequence).lookingAt();
+        assertEquals(expResult, result);
     }
 
 }

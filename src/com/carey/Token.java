@@ -10,6 +10,8 @@
  */
 package com.carey;
 
+import java.util.Objects;
+
 /**
  * Token is the representation of the basic lexeme of the language. Tokens
  * embody the type content and location in the source file where they were
@@ -75,4 +77,34 @@ class Token {
         return offset;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.type);
+        hash = 53 * hash + Objects.hashCode(this.content);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Token other = (Token) obj;
+        if (this.type != other.type) {
+            return false;
+        }
+        if (!Objects.equals(this.content, other.content)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s [%s]", type.name(), content);
+    }
 }

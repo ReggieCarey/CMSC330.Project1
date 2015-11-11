@@ -149,4 +149,8 @@ enum Type {
         return pattern != null ? pattern.matcher(charSequence) : null;
     }
 
+    @Override
+    public String toString() {
+        return ((pattern.flags() & LITERAL) == LITERAL) ? pattern.toString() : name()+" token";
+    }
 }

@@ -29,6 +29,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -53,6 +54,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 class Emitter {
 
     private final LinkedList parsingStack;
+    private JFrame gui;
 
     /**
      * Emitter constructor sets up the environment for the emitter and its
@@ -96,9 +98,7 @@ class Emitter {
             }
 
             if (cmd == ENDWINDOW) {
-
-                // We delay popping the GUI from the stack to make sure
-                // we've consumed all of the input.
+                gui = (JFrame) parsingStack.pop();
             }
 
             if (cmd == PANEL) {
@@ -175,8 +175,7 @@ class Emitter {
             }
 
             if (cmd == ENDOFINPUT) {
-                JFrame jFrame = (JFrame) parsingStack.pop();
-                jFrame.setVisible(true);
+                gui.setVisible(true);
             }
         } catch (ClassCastException ex) {
             throw new ParseException("Command arguments or elements on the parsing stack are of the wrong type", ex);
@@ -280,4 +279,11 @@ class Emitter {
         return buttonGroup;
     }
 
+    /**
+     * In support of unit testing. This method returns an unmodifiable version
+     * of the internal parsing Stack.
+     */
+    Collection getParsingStack() {
+        return Collections.unmodifiableList(parsingStack);
+    }
 }

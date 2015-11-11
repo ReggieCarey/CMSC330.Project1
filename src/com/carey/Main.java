@@ -37,7 +37,7 @@ public class Main {
                 + "      Group\n"
                 + "        Radio \"Basic\";\n"
                 + "        Radio \"Scientific\";\n"
-                + "        Radio \"Programmer\";\n"
+                + "        Radio Window \"Programmer\";\n"
                 + "      End;\n"
                 + "    End;\n"
                 + "    Label \"CMSC 330 - Reggie Carey\";\n"
@@ -85,7 +85,7 @@ public class Main {
             if (ex.getMessage() != null) {
                 System.err.println("WITH MESSAGE: " + ex.getMessage());
             }
-        } catch (SyntaxError ex) {
+        } catch (SyntaxException ex) {
             System.err.println("SYNTAX ERROR: " + ex.getMessage());
             if (ex.getCause() != null) {
                 System.err.println("CAUSED BY: " + ex.getCause().getClass().getName());

@@ -62,7 +62,7 @@ class LexicalScanner {
      * reader at end of file detection. Instead, it will continuously return an
      * ENDOFINPUT token.
      */
-    void advance() throws IOException, SyntaxError {
+    void advance() throws IOException, SyntaxException {
 
         // In order to consume white space and blank lines, we must loop until
         // a terminating condition occurs - which may mean returning an end of
@@ -119,7 +119,7 @@ class LexicalScanner {
         }
 
         // We did not find a token. Throw a syntax error.
-        throw new SyntaxError(String.format("Unexpected content [%s] at [%d:%d]\n", current, lineNumber, offset));
+        throw new SyntaxException(String.format("Unexpected content [%s] after [%s] at [%d:%d]\n", current, currentToken.getType(), lineNumber, offset));
     }
 
 }

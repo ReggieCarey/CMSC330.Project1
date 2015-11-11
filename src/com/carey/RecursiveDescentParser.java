@@ -59,15 +59,15 @@ public class RecursiveDescentParser {
     private Emitter emitter;
 
     /**
-     * Parse a GUI DSL producing a GUI. This method will parse the contents of a
-     * Reader and generate a GUI based on the content.
+     * Parse a program from a Reader producing a GUI. This method will parse the
+     * contents of a Reader and generate a GUI based on the content.
      *
      * @param stream A basic reader containing the content to parse.
-     * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws IOException On problems consuming the reader
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    public void parse(Reader stream) throws IOException, SyntaxError, ParseException {
+    public void parse(Reader stream) throws IOException, SyntaxException, ParseException {
         try {
             lex = new LexicalScanner(stream);
             emitter = new Emitter();
@@ -80,28 +80,28 @@ public class RecursiveDescentParser {
     }
 
     /**
-     * Parse a GUI DSL producing a GUI. This method will parse the contents of a
-     * Reader and generate a GUI based on the content.
+     * Parse a program from a String producing a GUI. This method will parse the
+     * contents of a String and generate a GUI based on the content.
      *
      * @param content A string containing the content to parse.
-     * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws IOException On problems consuming the string
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    public void parse(String content) throws IOException, SyntaxError, ParseException {
+    public void parse(String content) throws IOException, SyntaxException, ParseException {
         parse(new StringReader(content));
     }
 
     /**
-     * Parse a GUI DSL producing a GUI. This method will parse the contents of a
-     * Reader and generate a GUI based on the content.
+     * Parse a program from a File producing a GUI. This method will parse the
+     * contents of a File and generate a GUI based on the content.
      *
      * @param file A file containing the content to parse.
-     * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws IOException On problems consuming the file
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    public void parse(File file) throws IOException, SyntaxError, ParseException {
+    public void parse(File file) throws IOException, SyntaxException, ParseException {
         parse(new FileReader(file));
     }
 
@@ -111,10 +111,10 @@ public class RecursiveDescentParser {
      * gui ::= Window STRING '(' NUMBER ',' NUMBER ')' layout widgets End '.'
      *
      * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    private void gui() throws IOException, SyntaxError, ParseException {
+    private void gui() throws IOException, SyntaxException, ParseException {
         matchThenAdvance(BEGINOFINPUT);
         matchThenAdvance(WINDOW);
         String windowName = matchThenAdvance(STRING).getContent();
@@ -139,10 +139,10 @@ public class RecursiveDescentParser {
      * layout ::= Layout layout_type ':'
      *
      * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    private void layout() throws IOException, SyntaxError, ParseException {
+    private void layout() throws IOException, SyntaxException, ParseException {
         matchThenAdvance(LAYOUT);
         layout_type();
         matchThenAdvance(COLON);
@@ -157,10 +157,10 @@ public class RecursiveDescentParser {
      * ')'
      *
      * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    private void layout_type() throws IOException, SyntaxError, ParseException {
+    private void layout_type() throws IOException, SyntaxException, ParseException {
         Token token = matchThenAdvance(FLOW, GRID);
 
         if (FLOW == token.getType()) {
@@ -195,10 +195,10 @@ public class RecursiveDescentParser {
      * to a loop.
      *
      * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    private void widgets() throws IOException, SyntaxError, ParseException {
+    private void widgets() throws IOException, SyntaxException, ParseException {
         widget();
         if (!doesMatch(END)) {
             widgets();
@@ -212,10 +212,10 @@ public class RecursiveDescentParser {
      * ';' | Panel layout widgets End ';' | Textfield NUMBER ';'
      *
      * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    private void widget() throws IOException, SyntaxError, ParseException {
+    private void widget() throws IOException, SyntaxException, ParseException {
         Token token = matchThenAdvance(BUTTON, GROUP, LABEL, PANEL, TEXTFIELD);
 
         if (BUTTON == token.getType()) {
@@ -264,10 +264,10 @@ public class RecursiveDescentParser {
      * to a loop.
      *
      * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    private void radio_buttons() throws IOException, SyntaxError, ParseException {
+    private void radio_buttons() throws IOException, SyntaxException, ParseException {
         radio_button();
         if (!doesMatch(END)) {
             radio_buttons();
@@ -281,10 +281,10 @@ public class RecursiveDescentParser {
      * radio_button ::= Radio STRING ';'
      *
      * @throws IOException On problems reading the reader
-     * @throws SyntaxError On any token parsing error
+     * @throws SyntaxException On any token parsing error
      * @throws ParseException On any structural parsing error
      */
-    private void radio_button() throws IOException, SyntaxError, ParseException {
+    private void radio_button() throws IOException, SyntaxException, ParseException {
         matchThenAdvance(RADIO);
         String name = matchThenAdvance(STRING).getContent();
         matchThenAdvance(SEMICOLON);
@@ -311,7 +311,7 @@ public class RecursiveDescentParser {
         if (doesMatch(types)) {
             return lex.getCurrentToken();
         }
-        throw new ParseException(String.format("Unexpected content [%s] - expecting a token from %s at [%d:%d]\n",
+        throw new ParseException(String.format("Unexpected content [%s] - expecting %s at [%d:%d]\n",
                 lex.getCurrentToken().getContent(),
                 Arrays.toString(types),
                 lex.getCurrentToken().getLineNumber(),
@@ -328,10 +328,10 @@ public class RecursiveDescentParser {
      * @throws ParseException If the token at the front of the stream does not
      * match
      * @throws IOException If there are problems consuming the stream
-     * @throws SyntaxError If the front of the stream does not correspond to a
+     * @throws SyntaxException If the front of the stream does not correspond to a
      * token
      */
-    private Token matchThenAdvance(Type... types) throws ParseException, IOException, SyntaxError {
+    private Token matchThenAdvance(Type... types) throws ParseException, IOException, SyntaxException {
         Token prevToken = (types.length == 0) ? lex.getCurrentToken() : match(types);
         lex.advance();
         return prevToken;
@@ -359,10 +359,10 @@ public class RecursiveDescentParser {
      * @throws ParseException If the token at the front of the stream does not
      * match
      * @throws IOException If there are problems consuming the stream
-     * @throws SyntaxError If the front of the stream does not correspond to a
+     * @throws SyntaxException If the front of the stream does not correspond to a
      * token
      */
-    private Token doesMatchThenAdvance(Type... types) throws ParseException, IOException, SyntaxError {
+    private Token doesMatchThenAdvance(Type... types) throws ParseException, IOException, SyntaxException {
         return doesMatch(types) ? matchThenAdvance() : null;
     }
 

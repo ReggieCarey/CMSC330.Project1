@@ -11,14 +11,14 @@
 package com.carey;
 
 /**
- * Syntax Error is used to identify lexical parsing problems. When ever there is
+ * SyntaxException is used to identify lexical parsing problems. When ever there is
  * a problem identifying a token, this exception is raised.
  *
  * @author ReginaldCarey
  */
-public class SyntaxError extends Exception {
+public class SyntaxException extends Exception {
 
-    public SyntaxError(String message) {
+    public SyntaxException(String message) {
         super(message);
     }
 
