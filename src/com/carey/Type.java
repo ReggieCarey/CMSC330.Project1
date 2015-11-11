@@ -1,7 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * *****************************************************************************
+ * NAME: Reginald B Carey
+ * EMPLID: 0316442
+ * PROJECT: Recursive Descent Parser - Project 1
+ * COURSE: CMSC 330 - 7980
+ * SECTION: 2158
+ * SEMESTER: FALL 2015
+ * *****************************************************************************
  */
 package com.carey;
 
@@ -21,6 +26,26 @@ public enum Type {
     BEGINOFINPUT,
 
     /**
+     * Synthetic type used to mark the end of a Window.
+     */
+    ENDWINDOW,
+
+    /**
+     * Synthetic type used to mark the end of a Panel.
+     */
+    ENDPANEL,
+
+    /**
+     * Synthetic type used to mark the end of a Group.
+     */
+    ENDGROUP,
+
+    /**
+     * Synthetic type used to mark the ending of the token stream.
+     */
+    ENDOFINPUT,
+
+    /**
      * Window is a keyword.
      */
     WINDOW("Window", LITERAL),
@@ -28,7 +53,7 @@ public enum Type {
     /**
      * A String. We only consider the contents between the quotes.
      */
-    STRING("\"([^\"]+)\""),
+    STRING("\"([^\"]*)\""),
 
     /**
      * L-parenthesis is used to start a list of related tokens.
@@ -43,7 +68,7 @@ public enum Type {
     /**
      * A Number. Numbers consist of 1-9 followed by zero or more 0-9.
      */
-    NUMBER("[123456789][0123456789]*"),
+    NUMBER("[1-9][0-9]*"),
 
     /**
      * End is a keyword.
@@ -113,12 +138,7 @@ public enum Type {
     /**
      * Radio is a keyword.
      */
-    RADIO("Radio", LITERAL),
-
-    /**
-     * Synthetic type used to mark the ending of the token stream.
-     */
-    ENDOFINPUT;
+    RADIO("Radio", LITERAL);
 
     private final Pattern pattern;
 

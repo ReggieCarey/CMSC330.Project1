@@ -1,7 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * *****************************************************************************
+ * NAME: Reginald B Carey
+ * EMPLID: 0316442
+ * PROJECT: Recursive Descent Parser - Project 1
+ * COURSE: CMSC 330 - 7980
+ * SECTION: 2158
+ * SEMESTER: FALL 2015
+ * *****************************************************************************
  */
 package com.carey;
 
@@ -31,7 +36,7 @@ public class LexicalParser {
      */
     public LexicalParser(Reader stream) throws IOException {
         reader = new BufferedReader(stream);
-        currentToken = new Token(Type.BEGINOFINPUT, null, lineNumber, offset);
+        currentToken = new Token(Type.BEGINOFINPUT, null, 0, 0);
     }
 
     /**
@@ -104,7 +109,9 @@ public class LexicalParser {
      */
     public boolean doesMatchThenAdvance(Type type) throws ParseException, IOException, SyntaxError {
         boolean match = currentToken.getType() == type;
-        advance();
+        if (match) {
+            advance();
+        }
         return match;
     }
 
@@ -117,86 +124,52 @@ public class LexicalParser {
     }
 
     private Token advance() throws IOException, SyntaxError {
-        Matcher whiteSpaceMatcher;
 
-        if (current != null) {
-            // create a whitespace matcher over the current line.
-            whiteSpaceMatcher = whiteSpace.matcher(current);
-
-            // If we got a matcher for a token and we have a prefix match
-            if (whiteSpaceMatcher != null && whiteSpaceMatcher.lookingAt()) {
-
-                // Offset to the next token is computed
-                offset += whiteSpaceMatcher.group().length();
-
-                // Remove what we just matched from the front of the string
-                current = current.substring(whiteSpaceMatcher.group().length());
-            }
-
-            if (current.length() == 0) {
-                current = null;
-            }
-        }
-
-        // Consume whitespace including blank lines
-        while (current == null) {
-
-            // read a line from the file
-            current = reader.readLine();
-
-            // If it's null then we've reached the end of the file
+        // While current is null we consume lines of data and white space
+        while (true) {
             if (current == null) {
-                currentToken = new Token(Type.ENDOFINPUT, null, lineNumber, offset);
-                return currentToken;
+                current = reader.readLine();
+                if (current != null) {
+                    lineNumber++;
+                    offset = 0;
+                } else {
+                    currentToken = new Token(Type.ENDOFINPUT, null, lineNumber, offset);
+                    return currentToken;
+                }
             }
-
-            // We have some data to parse. Reset our positional parameters
-            lineNumber++;
-            offset = 0;
-
-            // create a whitespace matcher over the current line.
-            whiteSpaceMatcher = whiteSpace.matcher(current);
-
-            // If we got a matcher for a token and we have a prefix match
-            if (whiteSpaceMatcher != null && whiteSpaceMatcher.lookingAt()) {
-
-                // Offset to the next token is computed
-                offset += whiteSpaceMatcher.group().length();
-
-                // Remove what we just matched from the front of the string
-                current = current.substring(whiteSpaceMatcher.group().length());
+            // Look for white space and consume it
+            Matcher m = whiteSpace.matcher(current);
+            if (m.lookingAt()) {
+                offset += m.group().length();
+                current = current.substring(m.group().length());
             }
 
             if (current.length() == 0) {
                 current = null;
+            } else {
+                break;
             }
         }
 
-System.out.println("Current input line ["+current+"]");
-        // An horrifically inefficient token matching loop
-        for (Type type : Type.values()) {
+        // Find the next legal token
+        for (Type tokenType : Type.values()) {
+            Matcher tokenMatcher = tokenType.getMatcher(current);
+            if (tokenMatcher == null) {
+                continue;
+            }
 
-            System.out.println("Is it a "+type);
-            // Get a matcher for a token
-            Matcher typeMatcher = type.getMatcher(current);
-
-            // If we got a matcher for a token and we have a prefix match
-            if (typeMatcher != null && typeMatcher.lookingAt()) {
-
-                // The current token is what we found
-                currentToken = new Token(type, typeMatcher.group(typeMatcher.groupCount()), lineNumber, offset + typeMatcher.start(typeMatcher.groupCount()));
-
-                // Offset to the next token is computed
-                offset += typeMatcher.group().length();
-
-                // Remove what we just matched from the front of the string
-                current = current.substring(typeMatcher.group().length());
-System.out.println("It is a Token : "+currentToken);
+            if (tokenMatcher.lookingAt()) {
+                String foundStr = tokenMatcher.group(tokenMatcher.groupCount());
+                currentToken = new Token(tokenType, foundStr, lineNumber, offset);
+                offset += tokenMatcher.group().length();
+                current = current.substring(tokenMatcher.group().length());
+                if (current.length() == 0) {
+                    current = null;
+                }
                 return currentToken;
             }
         }
 
         throw new SyntaxError(String.format("Invalid token at [%d:%d]\n", lineNumber, offset));
     }
-
 }
