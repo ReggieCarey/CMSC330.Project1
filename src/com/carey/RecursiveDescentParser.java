@@ -200,8 +200,9 @@ public class RecursiveDescentParser {
      */
     private void widgets() throws IOException, SyntaxException, ParseException {
         widget();
-        if (!doesMatch(END)) {
+        try {
             widgets();
+        } catch (ParseException ex) {
         }
     }
 
@@ -269,8 +270,9 @@ public class RecursiveDescentParser {
      */
     private void radio_buttons() throws IOException, SyntaxException, ParseException {
         radio_button();
-        if (!doesMatch(END)) {
+        try {
             radio_buttons();
+        } catch (ParseException ex) {
         }
     }
 
@@ -328,8 +330,8 @@ public class RecursiveDescentParser {
      * @throws ParseException If the token at the front of the stream does not
      * match
      * @throws IOException If there are problems consuming the stream
-     * @throws SyntaxException If the front of the stream does not correspond to a
-     * token
+     * @throws SyntaxException If the front of the stream does not correspond to
+     * a token
      */
     private Token matchThenAdvance(Type... types) throws ParseException, IOException, SyntaxException {
         Token prevToken = (types.length == 0) ? lex.getCurrentToken() : match(types);
@@ -359,8 +361,8 @@ public class RecursiveDescentParser {
      * @throws ParseException If the token at the front of the stream does not
      * match
      * @throws IOException If there are problems consuming the stream
-     * @throws SyntaxException If the front of the stream does not correspond to a
-     * token
+     * @throws SyntaxException If the front of the stream does not correspond to
+     * a token
      */
     private Token doesMatchThenAdvance(Type... types) throws ParseException, IOException, SyntaxException {
         return doesMatch(types) ? matchThenAdvance() : null;

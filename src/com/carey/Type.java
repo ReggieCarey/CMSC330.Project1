@@ -151,6 +151,11 @@ enum Type {
 
     @Override
     public String toString() {
-        return ((pattern.flags() & LITERAL) == LITERAL) ? pattern.toString() : name()+" token";
+        if (pattern == null) {
+            return name() + " token";
+        } else {
+            return ((pattern.flags() & LITERAL) == LITERAL) ? pattern.toString() : name() + " token";
+        }
     }
+
 }

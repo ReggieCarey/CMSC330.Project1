@@ -11,8 +11,8 @@
 package com.carey;
 
 /**
- * SyntaxException is used to identify lexical parsing problems. When ever there is
- * a problem identifying a token, this exception is raised.
+ * SyntaxException is used to identify lexical parsing problems. When ever there
+ * is a problem identifying a token, this exception is raised.
  *
  * @author ReginaldCarey
  */

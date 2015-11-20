@@ -286,4 +286,5 @@ class Emitter {
     Collection getParsingStack() {
         return Collections.unmodifiableList(parsingStack);
     }
+
 }
